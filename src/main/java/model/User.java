@@ -6,6 +6,7 @@ import utils.FileManager;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -17,6 +18,13 @@ public class User implements Serializable {
     private SecurityQuestion securityQuestion;
     private String securityAnswer;
     private int failedLoginAttempts;
+
+    // New attributes for the user
+    private List<Card> cardDeck;
+    private int level;
+    private int hp;
+    private int xp;
+    private int coins;
 
     private static HashMap<String, User> users = FileManager.loadUsers();
 
@@ -32,7 +40,12 @@ public class User implements Serializable {
             @JsonProperty("nickname") String nickname,
             @JsonProperty("email") String email,
             @JsonProperty("securityQuestion") SecurityQuestion securityQuestion,
-            @JsonProperty("securityAnswer") String securityAnswer
+            @JsonProperty("securityAnswer") String securityAnswer,
+            @JsonProperty("cardDeck") List<Card> cardDeck,
+            @JsonProperty("level") int level,
+            @JsonProperty("hp") int hp,
+            @JsonProperty("xp") int xp,
+            @JsonProperty("coins") int coins
     ) {
         this.username = username;
         this.password = password;
@@ -41,11 +54,20 @@ public class User implements Serializable {
         this.securityQuestion = securityQuestion;
         this.securityAnswer = securityAnswer;
         this.failedLoginAttempts = 0;
+        this.cardDeck = cardDeck;
+        this.level = level;
+        this.hp = hp;
+        this.xp = xp;
+        this.coins = coins;
     }
 
     // Getters and Setters
     public String getUsername() {
         return username;
+    }
+    public static void updateUser(User user) {
+        users.put(user.getUsername(), user);
+        FileManager.saveUsers(users);
     }
 
     public void setUsername(String username) {
@@ -98,6 +120,46 @@ public class User implements Serializable {
 
     public void setFailedLoginAttempts(int failedLoginAttempts) {
         this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public List<Card> getCardDeck() {
+        return cardDeck;
+    }
+
+    public void setCardDeck(List<Card> cardDeck) {
+        this.cardDeck = cardDeck;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
     }
 
     public static void addUser(User user) {

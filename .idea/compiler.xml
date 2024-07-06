@@ -9,8 +9,5 @@
         <module name="city_of_wars" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="city_of_wars" target="19" />
-    </bytecodeTargetLevel>
   </component>
 </project>
