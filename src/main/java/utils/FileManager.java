@@ -30,7 +30,12 @@ public class FileManager {
     // Load all users from JSON file
     public static HashMap<String, User> loadUsers() {
         try {
-            return objectMapper.readValue(new File(USER_FILE_PATH), new TypeReference<HashMap<String, User>>() {});
+            File file = new File(USER_FILE_PATH);
+            if (file.exists() && file.length() != 0) { // Check if the file is not empty
+                return objectMapper.readValue(file, new TypeReference<HashMap<String, User>>() {});
+            } else {
+                return new HashMap<>();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return new HashMap<>();
@@ -49,7 +54,12 @@ public class FileManager {
     // Load all cards from JSON file
     public static List<Card> loadCards() {
         try {
-            return objectMapper.readValue(new File(CARD_FILE_PATH), new TypeReference<List<Card>>() {});
+            File file = new File(CARD_FILE_PATH);
+            if (file.exists() && file.length() != 0) { // Check if the file is not empty
+                return objectMapper.readValue(file, new TypeReference<List<Card>>() {});
+            } else {
+                return new ArrayList<>();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
@@ -68,16 +78,15 @@ public class FileManager {
     // Load all players from JSON file
     public static List<Player> loadPlayers() {
         try {
-            return objectMapper.readValue(new File(PLAYER_FILE_PATH), new TypeReference<List<Player>>() {});
+            File file = new File(PLAYER_FILE_PATH);
+            if (file.exists() && file.length() != 0) { // Check if the file is not empty
+                return objectMapper.readValue(file, new TypeReference<List<Player>>() {});
+            } else {
+                return new ArrayList<>();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
-
-
-
-
-
-
 }

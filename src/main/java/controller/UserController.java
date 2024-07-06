@@ -2,7 +2,6 @@ package controller;
 
 import model.User;
 import model.SecurityQuestion;
-import utils.FileManager;
 
 import java.util.Random;
 import java.util.Scanner;
