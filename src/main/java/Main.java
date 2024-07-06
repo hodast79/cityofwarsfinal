@@ -12,8 +12,8 @@ public class Main {
         AdminController adminController = new AdminController(admin);
         MainMenu mainMenu = new MainMenu();
         Scanner scanner = new Scanner(System.in);
-        //sjedoebodjbeodjbeobdoejbd
-        //deded
+        //swswswsws
+
 
         boolean running = true;
 
