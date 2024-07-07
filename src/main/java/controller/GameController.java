@@ -61,10 +61,10 @@ public class GameController {
 
     private void initializeDecks() {
         Random random = new Random();
-        int blockedIndex = random.nextInt(DECK_SIZE);
+        unaccessibleBlock = random.nextInt(DECK_SIZE); // Set the unaccessible block
 
         for (int i = 0; i < DECK_SIZE; i++) {
-            if (i == blockedIndex) {
+            if (i == unaccessibleBlock) {
                 System.out.print("[X] ");
             } else {
                 System.out.print("[ ] ");
@@ -73,7 +73,7 @@ public class GameController {
         System.out.println();
 
         for (int i = 0; i < DECK_SIZE; i++) {
-            if (i == blockedIndex) {
+            if (i == unaccessibleBlock) {
                 System.out.print("[X] ");
             } else {
                 System.out.print("[ ] ");
@@ -83,21 +83,33 @@ public class GameController {
 
         player1.initializeDeck(DECK_SIZE);
         player2.initializeDeck(DECK_SIZE);
+
+        // Initialize players' hands with 5 random cards each
+        drawInitialHand(player1);
+        drawInitialHand(player2);
     }
 
+    private void drawInitialHand(Player player) {
+        Random random = new Random();
+        List<Card> cardDeck = player.getCardDeck();
+        for (int i = 0; i < 5; i++) {
+            int randomIndex = random.nextInt(cardDeck.size());
+            player.addCardToHand(cardDeck.get(randomIndex));
+        }
+    }
     private void showDecks() {
         System.out.println(player1.getUsername() + "'s deck:");
-        for (Card card : player1.getDeck()) {
-            if (card == null) {
-                System.out.print("[ ] ");
-            } else {
-                System.out.print("[" + card.getName() + "] ");
-            }
-        }
-        System.out.println();
+        player1.showDeck();
+        showHand(player1);
 
         System.out.println(player2.getUsername() + "'s deck:");
-        for (Card card : player2.getDeck()) {
+        player2.showDeck();
+        showHand(player2);
+    }
+
+    private void showHand(Player player) {
+        System.out.println(player.getUsername() + "'s hand:");
+        for (Card card : player.getHand()) {
             if (card == null) {
                 System.out.print("[ ] ");
             } else {
@@ -152,34 +164,41 @@ public class GameController {
             return;
         }
 
-        if (!player.canPlaceCard(cardChoice, position)) {
+        if (!validatePosition(player, position, chosenCard.getDuration())) {
             System.out.println("Cannot place card here. Turn skipped.");
             return;
         }
 
         player.placeCardOnDeck(chosenCard, position);
+        drawNewCard(player);
+    }
+
+    private boolean validatePosition(Player player, int position, int duration) {
+        List<Card> deck = player.getDeck();
+        for (int i = 0; i < duration; i++) {
+            if (position + i >= DECK_SIZE || deck.get(position + i) != null || position + i == unaccessibleBlock) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void drawNewCard(Player player) {
+        Random random = new Random();
+        List<Card> cardDeck = player.getCardDeck();
+        int randomIndex = random.nextInt(cardDeck.size());
+        player.addCardToHand(cardDeck.get(randomIndex));
     }
 
     private void calculateDamage() {
-        List<Card> deck1 = player1.getDeck();
-        List<Card> deck2 = player2.getDeck();
-
         for (int i = 0; i < DECK_SIZE; i++) {
-            Card card1 = i < deck1.size() ? deck1.get(i) : null;
-            Card card2 = i < deck2.size() ? deck2.get(i) : null;
+            Card card1 = player1.getDeck().get(i);
+            Card card2 = player2.getDeck().get(i);
 
-            if (card1 != null && card2 != null) {
-                if (card1.getDefenseAttack() > card2.getDefenseAttack()) {
-                    int damage = card1.getPlayerDamage() / card1.getDuration();
-                    player2.setHp(player2.getHp() - damage);
-                } else if (card2.getDefenseAttack() > card1.getDefenseAttack()) {
-                    int damage = card2.getPlayerDamage() / card2.getDuration();
-                    player1.setHp(player1.getHp() - damage);
-                }
-            } else if (card1 != null) {
+            if (card1 != null && (card2 == null || card1.getDefenseAttack() > card2.getDefenseAttack())) {
                 int damage = card1.getPlayerDamage() / card1.getDuration();
                 player2.setHp(player2.getHp() - damage);
-            } else if (card2 != null) {
+            } else if (card2 != null && (card1 == null || card2.getDefenseAttack() > card1.getDefenseAttack())) {
                 int damage = card2.getPlayerDamage() / card2.getDuration();
                 player1.setHp(player1.getHp() - damage);
             }
@@ -187,15 +206,14 @@ public class GameController {
     }
 
     private void displayWinner() {
-        System.out.println("Game Over!");
         if (player1.getHp() <= 0 && player2.getHp() <= 0) {
-            System.out.println("It's a tie!");
+            System.out.println("It's a draw!");
         } else if (player1.getHp() <= 0) {
             System.out.println(player2.getUsername() + " wins!");
         } else if (player2.getHp() <= 0) {
             System.out.println(player1.getUsername() + " wins!");
         } else {
-            System.out.println("No winner. Another round will be needed.");
+            System.out.println("Both players survived. It's a draw!");
         }
     }
 

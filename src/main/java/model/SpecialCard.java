@@ -35,5 +35,6 @@ public abstract class SpecialCard {
         this.description = description;
     }
 
-    public abstract void useSpecialAbility();
+
+    public abstract void useSpecialAbility(Player currentPlayer, Player opponent);
 }
