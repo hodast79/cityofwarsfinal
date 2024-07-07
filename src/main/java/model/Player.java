@@ -8,19 +8,31 @@ public class Player implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String username;
+    private String password;
+    private String nickname;
+    private String email;
+    private SecurityQuestion securityQuestion;
+    private String securityAnswer;
+    private List<Card> cardDeck;
     private int level;
     private int hp;
     private int xp;
     private int coins;
-    private List<Card> cards;
 
-    public Player(String username) {
+    public Player(String username, String password, String nickname, String email,
+                  SecurityQuestion securityQuestion, String securityAnswer, List<Card> cardDeck,
+                  int level, int hp, int xp, int coins) {
         this.username = username;
-        this.level = 1;
-        this.hp = 100;
-        this.xp = 0;
-        this.coins = 0;
-        this.cards = new ArrayList<>();
+        this.password = password;
+        this.nickname = nickname;
+        this.email = email;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswer = securityAnswer;
+        this.cardDeck = cardDeck;
+        this.level = level;
+        this.hp = hp;
+        this.xp = xp;
+        this.coins = coins;
     }
 
     public void addCard(Card card) {
@@ -44,6 +56,14 @@ public class Player implements Serializable {
 
     public int getHp() {
         return hp;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public int getCoins() {
+        return coins;
     }
 
     public void setHp(int hp) {
