@@ -47,5 +47,33 @@ public abstract class Card {
         return upgradeCost;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDefenseAttack(int defenseAttack) {
+        this.defenseAttack = defenseAttack;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setPlayerDamage(int playerDamage) {
+        this.playerDamage = playerDamage;
+    }
+
+    public void setMaxLevel(int maxLevel) {
+        this.maxLevel = maxLevel;
+    }
+
+    public void setUpgradeCost(int upgradeCost) {
+        this.upgradeCost = upgradeCost;
+    }
+
     public abstract void activateAbility(Player player, Player opponent);
 }

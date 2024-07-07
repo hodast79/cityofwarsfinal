@@ -10,4 +10,6 @@ public class NormalCard extends Card {
     public void activateAbility(Player player, Player opponent) {
         // Normal cards might not have special abilities
     }
+
+
 }

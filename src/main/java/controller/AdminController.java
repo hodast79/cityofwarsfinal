@@ -4,6 +4,11 @@ import model.*;
 
 import java.util.Scanner;
 
+
+import model.Admin;
+import model.Card;
+import model.Player;
+
 public class AdminController {
     private Admin admin;
 
@@ -52,16 +57,18 @@ public class AdminController {
     public void editCard() {
         Scanner scanner = new Scanner(System.in);
         admin.viewAllCards();
-        System.out.println("Enter the index of the card to edit:");
-        int index = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        System.out.println("Enter the name of the card to edit:");
+        String cardName = scanner.nextLine();
 
-        if (index < 0 || index >= admin.getCards().size()) {
-            System.out.println("Invalid card index.");
+        Card cardToEdit = admin.getCards().stream()
+                .filter(card -> card.getName().equals(cardName))
+                .findFirst()
+                .orElse(null);
+
+        if (cardToEdit == null) {
+            System.out.println("Card not found.");
             return;
         }
-
-        Card cardToEdit = admin.getCards().get(index);
 
         System.out.println("Current card name: " + cardToEdit.getName());
         System.out.println("Enter new card name:");
@@ -104,32 +111,37 @@ public class AdminController {
         cardToEdit.setMaxLevel(newMaxLevel);
         cardToEdit.setUpgradeCost(newUpgradeCost);
 
+        admin.editCard(cardToEdit);
         System.out.println("Card successfully edited.");
     }
 
-    private SpecialCard createSpecialCard(String name, String description, int defenseAttack, int duration, int playerDamage, int maxLevel, int upgradeCost, String abilityType) {
-        switch (abilityType) {
-            case "Green":
+    public void deleteCard() {
+        Scanner scanner = new Scanner(System.in);
+        admin.viewAllCards();
+        System.out.println("Enter the name of the card to delete:");
+        String cardName = scanner.nextLine();
+
+        admin.deleteCard(cardName);
+        System.out.println("Card deleted successfully.");
+    }
+
+    public void viewAllPlayers() {
+        System.out.println("List of all players:");
+        for (Player player : admin.getPlayers()) {
+            System.out.println("Username: " + player.getUsername() + ", Level: " + player.getLevel() + ", Coins: " + player.getCoins());
+        }
+    }
+
+    // Helper method to create special cards
+    private Card createSpecialCard(String name, String description, int defenseAttack, int duration, int playerDamage, int maxLevel, int upgradeCost, String abilityType) {
+        switch (abilityType.toLowerCase()) {
+            case "green":
                 return new GreenCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "HPBoost":
+            case "hpboost":
                 return new HPBoostCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "PowerUp":
-                return new PowerUpCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "ChangeLocation":
-                return new ChangeLocationCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "Repair":
-                return new RepairCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "Weakening":
-                return new WeakeningCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "RemoveCardFromHand":
-                return new RemoveCardFromHand(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "ReduceOpponentCard":
-                return new ReduceOpponentCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "Copy":
-                return new CopyCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "Hidden":
-                return new HiddenCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
+            // Add other special card types here
             default:
+                System.out.println("Invalid ability type for special card.");
                 return null;
         }
     }
