@@ -180,6 +180,7 @@ public class Main {
             loggedIn = userController.loginUser();
         }
         return new Player(userController.getLoggedInUser());
+        ///
     }
     private static void adminMenu(AdminController adminController) {
         Scanner scanner = new Scanner(System.in);
