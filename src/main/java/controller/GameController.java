@@ -14,6 +14,8 @@ public class GameController {
     private List<Card> cardDeck;
     private final int DECK_SIZE = 21;
     private int unaccessibleBlock;
+    private boolean isPlayer1Turn; // Added this variable to track whose turn it is
+
 
     Scanner scanner = new Scanner(System.in);
 
@@ -28,8 +30,14 @@ public class GameController {
         chooseCharacters();
         initializeDecks();
         showDecks();
+
+        // Randomly determine which player starts
+        Random random = new Random();
+        isPlayer1Turn = random.nextBoolean();
+
         gameLoop();
     }
+
 
     private void chooseCharacters() {
         String[] characters = {"Warrior", "Mage", "Archer", "Assassin"};
@@ -101,12 +109,18 @@ public class GameController {
 
     private void gameLoop() {
         boolean gameRunning = true;
-        int rounds = 4;
+        int rounds = 4; // Assuming each player has 4 turns
+
         while (gameRunning && rounds > 0) {
-            playerTurn(player1);
-            showDecks();
-            playerTurn(player2);
-            showDecks();
+            if (isPlayer1Turn) {
+                playerTurn(player1);
+                showDecks();
+                isPlayer1Turn = false;
+            } else {
+                playerTurn(player2);
+                showDecks();
+                isPlayer1Turn = true;
+            }
             rounds--;
         }
 
