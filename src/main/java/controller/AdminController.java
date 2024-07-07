@@ -2,9 +2,10 @@ package controller;
 
 import model.*;
 
+import java.util.List;
 import java.util.Scanner;
 
-
+import utils.FileManager;
 import model.Admin;
 import model.Card;
 import model.Player;
@@ -15,6 +16,22 @@ public class AdminController {
     public AdminController(Admin admin) {
         this.admin = admin;
     }
+    public boolean loginAdmin() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter admin username:");
+        String username = scanner.nextLine();
+        System.out.println("Enter admin password:");
+        String password = scanner.nextLine();
+
+        // Hardcoded admin credentials for simplicity
+        if (username.equals("admin") && password.equals("adminpass")) {
+            System.out.println("Admin logged in successfully!");
+            return true;
+        } else {
+            System.out.println("Invalid admin credentials.");
+            return false;
+        }
+    }
 
     public void addCard() {
         Scanner scanner = new Scanner(System.in);
@@ -22,6 +39,18 @@ public class AdminController {
         String name = scanner.nextLine();
         System.out.println("Enter card description:");
         String description = scanner.nextLine();
+        System.out.println("Enter card character(type):");
+        String character = scanner.nextLine();
+        boolean validCharacter = false;
+
+        while(!validCharacter) {
+           validCharacter = character.equals("Warrior") || character.equals("Mage") || character.equals("Archer") || character.equals("Assassin");
+            if (!validCharacter) {
+                System.out.println("Enter a valid card character(type):");
+                character = scanner.nextLine();
+            }
+        }
+
         System.out.println("Enter defense/attack value (10-100):");
         int defenseAttack = scanner.nextInt();
         System.out.println("Enter duration (1-5):");
@@ -33,19 +62,7 @@ public class AdminController {
         System.out.println("Enter upgrade cost:");
         int upgradeCost = scanner.nextInt();
         scanner.nextLine();  // Consume newline
-        System.out.println("Enter card type (1 for normal, 2 for special):");
-        int type = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-
-        Card newCard = null;
-        if (type == 1) {
-            newCard = new NormalCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-        } else if (type == 2) {
-            System.out.println("Enter special card ability type (e.g., Green, HPBoost, etc.):");
-            String abilityType = scanner.nextLine();
-            newCard = createSpecialCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost, abilityType);
-        }
-
+        Card newCard = new Card (name,defenseAttack,character,duration, playerDamage, upgradeCost,maxLevel ,description);
         if (newCard != null) {
             admin.addCard(newCard);
             System.out.println("Card added successfully.");
@@ -54,9 +71,14 @@ public class AdminController {
         }
     }
 
+
+
     public void editCard() {
         Scanner scanner = new Scanner(System.in);
-        admin.viewAllCards();
+
+        List<Card> cards = admin.viewAllCards();
+
+
         System.out.println("Enter the name of the card to edit:");
         String cardName = scanner.nextLine();
 
@@ -81,42 +103,57 @@ public class AdminController {
         System.out.println("Current card description: " + cardToEdit.getDescription());
         System.out.println("Enter new card description:");
         String newDescription = scanner.nextLine();
+        if (!newDescription.trim().isEmpty()) {
+        cardToEdit.setDescription(newDescription);
+        }
 
         System.out.println("Current defense/attack value: " + cardToEdit.getDefenseAttack());
         System.out.println("Enter new defense/attack value (10-100):");
-        int newDefenseAttack = scanner.nextInt();
+        String newDefenseAttack = scanner.nextLine();
+        if (!newDefenseAttack.trim().isEmpty()) {
+            cardToEdit.setDefenseAttack(Integer.parseInt(newDefenseAttack));
+        }
 
         System.out.println("Current duration: " + cardToEdit.getDuration());
         System.out.println("Enter new duration (1-5):");
-        int newDuration = scanner.nextInt();
+        String newDuration = scanner.nextLine();
+        if (!newDuration.trim().isEmpty()) {
+            cardToEdit.setDuration(Integer.parseInt(newDuration));
+        }
+
 
         System.out.println("Current player damage: " + cardToEdit.getPlayerDamage());
         System.out.println("Enter new player damage (10-50):");
-        int newPlayerDamage = scanner.nextInt();
+        String newPlayerDamage = scanner.nextLine();
+        if (!newPlayerDamage.trim().isEmpty()) {
+            cardToEdit.setPlayerDamage(Integer.parseInt(newPlayerDamage));
+        }
 
         System.out.println("Current max level: " + cardToEdit.getMaxLevel());
         System.out.println("Enter new max level (5-10):");
-        int newMaxLevel = scanner.nextInt();
+        String newLevel = scanner.nextLine();
+        String newMaxLevel = scanner.nextLine();
+        if (!newMaxLevel.trim().isEmpty()) {
+            cardToEdit.setMaxLevel(Integer.parseInt(newMaxLevel));
+        }
 
         System.out.println("Current upgrade cost: " + cardToEdit.getUpgradeCost());
         System.out.println("Enter new upgrade cost:");
-        int newUpgradeCost = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        String newUpgradeCost = scanner.nextLine();
+        if (!newUpgradeCost.trim().isEmpty()) {
+            cardToEdit.setUpgradeCost(Integer.parseInt(newUpgradeCost));
+        }
 
-        cardToEdit.setName(newName);
-        cardToEdit.setDescription(newDescription);
-        cardToEdit.setDefenseAttack(newDefenseAttack);
-        cardToEdit.setDuration(newDuration);
-        cardToEdit.setPlayerDamage(newPlayerDamage);
-        cardToEdit.setMaxLevel(newMaxLevel);
-        cardToEdit.setUpgradeCost(newUpgradeCost);
 
-        admin.editCard(cardToEdit);
+
+        FileManager.saveCards(cards);
         System.out.println("Card successfully edited.");
-    }
+        }
+
 
     public void deleteCard() {
         Scanner scanner = new Scanner(System.in);
+        List<Card> cards = admin.viewAllCards();
         admin.viewAllCards();
         System.out.println("Enter the name of the card to delete:");
         String cardName = scanner.nextLine();
@@ -132,17 +169,8 @@ public class AdminController {
         }
     }
 
-    // Helper method to create special cards
-    private Card createSpecialCard(String name, String description, int defenseAttack, int duration, int playerDamage, int maxLevel, int upgradeCost, String abilityType) {
-        switch (abilityType.toLowerCase()) {
-            case "green":
-                return new GreenCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            case "hpboost":
-                return new HPBoostCard(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
-            // Add other special card types here
-            default:
-                System.out.println("Invalid ability type for special card.");
-                return null;
-        }
-    }
+
+
+
 }
+

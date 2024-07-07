@@ -1,6 +1,8 @@
 package controller;
 
+import com.sun.tools.javac.Main;
 import model.Card;
+import model.Player;
 import model.User;
 import model.SecurityQuestion;
 import utils.CaptchaGenerator;
@@ -16,12 +18,15 @@ public class UserController {
 
     private User loggedInUser;
 
-    public void registerUser() {
-        if (loggedInUser != null) {
-            System.out.println("A user is already logged in. Please log out before registering a new user.");
-            return;
-        }
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
 
+    public void setLoggedInUser(User loggedInUser) {
+        this.loggedInUser = loggedInUser;
+    }
+
+    public void registerUser() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter username:");
@@ -118,10 +123,12 @@ public class UserController {
         int level = 1;
         int hp = 100;
         int xp = 0;
-        int coins = 100;
+        int coins = 0;
 
+        Player player = new Player(username, password, nickname, email, securityQuestion, securityAnswer, cardDeck, level, hp, xp, coins);
         User user = new User(username, password, nickname, email, securityQuestion, securityAnswer, cardDeck, level, hp, xp, coins);
         User.addUser(user);
+
 
         System.out.println("User created successfully.");
     }
@@ -158,44 +165,46 @@ public class UserController {
     }
 
     public boolean loginUser() {
-        if (loggedInUser != null) {
+
+        if (loggedInUser == null) {
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("Enter username:");
+            String username = scanner.nextLine();
+
+            User user = User.getUser(username);
+            if (user == null) {
+                System.out.println("Username doesn't exist!");
+                return false;
+            }
+
+            System.out.println("Enter password:");
+            String password = scanner.nextLine();
+
+            if (user.getPassword().equals(password)) {
+                System.out.println("User logged in successfully!");
+                user.setFailedLoginAttempts(0);
+                loggedInUser = user;
+                return true;
+            } else {
+                int failedAttempts = user.getFailedLoginAttempts() + 1;
+                user.setFailedLoginAttempts(failedAttempts);
+                long delay = 5 * failedAttempts;
+
+                System.out.println("Password and Username don’t match! Try again in " + delay + " seconds.");
+                try {
+                    TimeUnit.SECONDS.sleep(delay);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return false;
+                }
+                return false;
+            }
+        } else {
             System.out.println("A user is already logged in. Please log out before logging in as a different user.");
             return true;
         }
 
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Enter username:");
-        String username = scanner.nextLine();
-
-        User user = User.getUser(username);
-        if (user == null) {
-            System.out.println("Username doesn't exist!");
-            return false;
-        }
-
-        System.out.println("Enter password:");
-        String password = scanner.nextLine();
-
-        if (user.getPassword().equals(password)) {
-            System.out.println("User logged in successfully!");
-            user.setFailedLoginAttempts(0);
-            loggedInUser = user;
-            return true;
-        } else {
-            int failedAttempts = user.getFailedLoginAttempts() + 1;
-            user.setFailedLoginAttempts(failedAttempts);
-            long delay = 5 * failedAttempts;
-
-            System.out.println("Password and Username don’t match! Try again in " + delay + " seconds.");
-            try {
-                TimeUnit.SECONDS.sleep(delay);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return false;
-            }
-            return false;
-        }
     }
 
     public void forgotPassword() {
@@ -232,14 +241,90 @@ public class UserController {
             System.out.println("Incorrect answer to the security question.");
         }
     }
-
-    public void logoutUser() {
+    public void logoutPlayer() {
+        if (loggedInUser == null) {
+            System.out.println("No player is currently logged in.");
+            return;
+        }
+        loggedInUser = null;
+        System.out.println("Player logged out successfully.");
+    }
+    public void profileMenu() {
         if (loggedInUser == null) {
             System.out.println("No user is currently logged in.");
             return;
         }
-        loggedInUser = null;
-        System.out.println("User logged out successfully.");
+
+        Scanner scanner = new Scanner(System.in);
+        boolean profileMenuRunning = true;
+
+        while (profileMenuRunning) {
+            System.out.println("Profile Menu:");
+            System.out.println("1. Show information");
+            System.out.println("2. Change username");
+            System.out.println("3. Change nickname");
+            System.out.println("4. Change password");
+            System.out.println("5. Change email");
+            System.out.println("6. Back to main menu");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    loggedInUser.displayInfo();
+                    break;
+                case 2:
+                    System.out.println("Enter new username:");
+                    String newUsername = scanner.nextLine();
+                    if (User.usernameExists(newUsername)) {
+                        System.out.println("Username already exists.");
+                    } else {
+                        loggedInUser.setUsername(newUsername);
+                        System.out.println("Username changed successfully.");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Enter new nickname:");
+                    String newNickname = scanner.nextLine();
+                    loggedInUser.setNickname(newNickname);
+                    System.out.println("Nickname changed successfully.");
+                    break;
+                case 4:
+                    System.out.println("Enter current password:");
+                    String currentPassword = scanner.nextLine();
+                    System.out.println("Enter new password:");
+                    String newPassword = scanner.nextLine();
+                    System.out.println("Confirm new password:");
+                    String confirmPassword = scanner.nextLine();
+
+                    if (!newPassword.equals(confirmPassword)) {
+                        System.out.println("Passwords do not match.");
+                    } else if (!isValidPassword(newPassword)) {
+                        System.out.println("New password is weak. It must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, and one special character.");
+                    } else if (loggedInUser.changePassword(currentPassword, newPassword)) {
+                        System.out.println("Password changed successfully.");
+                    } else {
+                        System.out.println("Current password is incorrect.");
+                    }
+                    break;
+                case 5:
+                    System.out.println("Enter new email:");
+                    String newEmail = scanner.nextLine();
+                    if (!isValidEmail(newEmail)) {
+                        System.out.println("Invalid email format.");
+                    } else {
+                        loggedInUser.setEmail(newEmail);
+                        System.out.println("Email changed successfully.");
+                    }
+                    break;
+                case 6:
+                    profileMenuRunning = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        }
     }
     public void viewUserProfile() {
         if (loggedInUser == null) {
@@ -254,6 +339,7 @@ public class UserController {
         System.out.println("XP: " + loggedInUser.getXp());
         System.out.println("Coins: " + loggedInUser.getCoins());
     }
+
 
     public void changeUsername() {
         if (loggedInUser == null) {
@@ -350,9 +436,6 @@ public class UserController {
         User.updateUser(loggedInUser); // Save changes to the user
         System.out.println("Email changed successfully.");
     }
-
-
-
 
 
     // Implement methods for profile management like changePassword, changeEmail, etc.

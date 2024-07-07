@@ -11,12 +11,12 @@ import java.util.List;
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String username;
-    private String password;
-    private String nickname;
-    private String email;
-    private SecurityQuestion securityQuestion;
-    private String securityAnswer;
+    protected String username;
+    protected String password;
+    protected String nickname;
+    protected String email;
+    protected SecurityQuestion securityQuestion;
+    protected String securityAnswer;
     private int failedLoginAttempts;
 
     // New attributes for the user
@@ -29,7 +29,7 @@ public class User implements Serializable {
     private static HashMap<String, User> users = FileManager.loadUsers();
 
     // Default constructor for Jackson
-    public User() {
+    public User(String username, String password, String nickname, String email, SecurityQuestion securityQuestion, String securityAnswer) {
     }
 
     // Parameterized constructor
@@ -61,6 +61,8 @@ public class User implements Serializable {
         this.coins = coins;
     }
 
+
+
     // Getters and Setters
     public String getUsername() {
         return username;
@@ -68,6 +70,14 @@ public class User implements Serializable {
     public static void updateUser(User user) {
         users.put(user.getUsername(), user);
         FileManager.saveUsers(users);
+    }
+
+    public boolean changePassword(String oldPassword, String newPassword) {
+        if (this.password.equals(oldPassword)) {
+            this.password = newPassword;
+            return true;
+        }
+        return false;
     }
 
     public void setUsername(String username) {
@@ -169,6 +179,16 @@ public class User implements Serializable {
 
     public static User getUser(String username) {
         return users.get(username);
+    }
+
+    public void displayInfo() {
+        System.out.println("Username: " + username);
+        System.out.println("Nickname: " + nickname);
+        System.out.println("Email: " + email);
+        System.out.println("Level: " + level);
+        System.out.println("HP: " + hp);
+        System.out.println("XP: " + xp);
+        System.out.println("Coins: " + coins);
     }
 
     public static boolean usernameExists(String username) {

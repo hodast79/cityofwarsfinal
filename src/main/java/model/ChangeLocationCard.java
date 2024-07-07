@@ -1,12 +1,14 @@
 package model;
 
 public class ChangeLocationCard extends SpecialCard {
-    public ChangeLocationCard(String name, String description, int defenseAttack, int duration, int playerDamage, int maxLevel, int upgradeCost) {
-        super(name, description, defenseAttack, duration, playerDamage, maxLevel, upgradeCost);
+    public ChangeLocationCard(String name, String specialAbility, String description) {
+        super(name, specialAbility, description);
     }
 
+
     @Override
-    public void activateAbility(Player player, Player opponent) {
-        // Changes the location of a block.
+    public void useSpecialAbility() {
+        // Implementation of the special ability
+        System.out.println("Using green card special ability: " + getSpecialAbility());
     }
 }

@@ -2,37 +2,38 @@ package model;
 
 import utils.FileManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
-
-import java.util.List;
-
-public class Admin {
-    private List<Player> players;
+public class Admin  {
     private List<Card> cards;
+    private List<Player> players;
 
     public Admin() {
-        this.players = FileManager.loadPlayers(); // assuming players are loaded from a file
-        this.cards = FileManager.loadCards(); // assuming cards are loaded from a file
+        this.cards = FileManager.loadCards();
+        this.players = FileManager.loadPlayers();
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    // Methods to add, edit, delete cards
+    public void addCard(Card card) {
+        cards.add(card);
+        FileManager.saveCards(cards);
     }
 
     public List<Card> getCards() {
         return cards;
     }
 
-    public void addCard(Card card) {
-        cards.add(card);
-        FileManager.saveCards(cards);
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 
-    public void editCard(Card updatedCard) {
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public void editCard(String cardName, Card updatedCard) {
         for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).getName().equals(updatedCard.getName())) {
+            if (cards.get(i).getName().equals(cardName)) {
                 cards.set(i, updatedCard);
                 FileManager.saveCards(cards);
                 return;
@@ -45,12 +46,20 @@ public class Admin {
         FileManager.saveCards(cards);
     }
 
-    public void viewAllCards() {
-        for (int i = 0; i < cards.size(); i++) {
-            System.out.println((i + 1) + ". " + cards.get(i).getName());
+    public List<Card> viewAllCards() {
+        return FileManager.loadCards();
+    }
+
+    public void viewAllPlayers() {
+        for (Player player : players) {
+            System.out.println(player.getUsername());
         }
     }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+
+
 }
-
-
-
