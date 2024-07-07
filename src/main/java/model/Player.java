@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Player {
@@ -20,6 +21,8 @@ public class Player {
 
     private List<Card> hand;
     private List<Card> deck;
+    private List<Card[]> timeline;
+    private int damage;
 
     public Player(String username, String password, String nickname, String email,
                   SecurityQuestion securityQuestion, String securityAnswer, List<Card> cardDeck,
@@ -40,6 +43,29 @@ public class Player {
         this.hand = new ArrayList<>();
     }
 
+    public Player(String username, String password, String nickname, String email,
+                  String SecurityQuestion , String securityAnswer, List<Card> cardDeck,
+                  int level, int hp, int xp, int coins) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.character = null; // Default to null until set by player
+        this.email = email;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswer = securityAnswer;
+        this.cardDeck = cardDeck;
+        this.level = level;
+        this.hp = hp;
+        this.xp = xp;
+        this.coins = coins;
+        this.hand = new ArrayList<>();
+        this.timeline = new ArrayList<>();
+        this.damage = 0;
+        drawInitialHand();
+    }
+
+
+
     public Player (User user){
         this.username = user.username;
         this.password = user.password;
@@ -55,7 +81,7 @@ public class Player {
         this.xp = user.getXp();
         this.coins = user.getCoins();
         this.hand = new ArrayList<>();
-
+        this.timeline = new ArrayList<>();
     }
 
     public List<Card> getCardDeck() {
@@ -241,5 +267,51 @@ public class Player {
         System.out.println();
     }
 
-// Other methods for changing username, email, etc.
+    public void drawInitialHand() {
+        Collections.shuffle(cardDeck);
+        for (int i = 0; i < 5; i++) {
+            drawCard();
+        }
+    }
+
+    public void drawCard() {
+        if (!cardDeck.isEmpty()) {
+            hand.add(cardDeck.remove(0));
+        }
+    }
+
+    public void playCard(int cardIndex, int position) {
+        Card card = hand.get(cardIndex);
+        for (int i = 0; i < card.getDuration(); i++) {
+            while (timeline.size() <= position + i) {
+                timeline.add(new Card[1]);
+            }
+            timeline.get(position + i)[0] = card;
+        }
+        hand.remove(cardIndex);
+        drawCard();
+    }
+
+    public boolean canPlaceCard(int cardIndex, int startPosition) {
+        Card card = hand.get(cardIndex);
+        for (int i = startPosition; i < startPosition + card.getDuration(); i++) {
+            if (i >= timeline.size() || (timeline.get(i)[0] != null)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Card[]> getTimeline() {
+        return timeline;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
 }

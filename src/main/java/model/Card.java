@@ -39,6 +39,17 @@ public class Card {
 
 
 
+    @Override
+    public String toString() {
+        return "Card{" +
+                "name='" + name + '\'' +
+                ", defenseAttack=" + defenseAttack +
+                ", duration=" + duration +
+                ", playerDamage=" + playerDamage +
+                ", character(type)='" + character + '\'' +
+                '}';
+    }
+
 
     public void displayInfo() {
         System.out.println("Name: " + name);

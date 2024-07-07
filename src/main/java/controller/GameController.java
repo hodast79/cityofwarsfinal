@@ -13,6 +13,7 @@ public class GameController {
     private Player player2;
     private List<Card> cardDeck;
     private final int DECK_SIZE = 21;
+    private int unaccessibleBlock;
 
     Scanner scanner = new Scanner(System.in);
 
@@ -100,21 +101,24 @@ public class GameController {
 
     private void gameLoop() {
         boolean gameRunning = true;
-        while (gameRunning) {
+        int rounds = 4;
+        while (gameRunning && rounds > 0) {
             playerTurn(player1);
             showDecks();
             playerTurn(player2);
             showDecks();
-
-            // Add logic to check for game-ending conditions here
+            rounds--;
         }
+
+        calculateDamage();
+        displayWinner();
     }
 
 
 
     private void playerTurn(Player player) {
         System.out.println(player.getUsername() + "'s turn:");
-        List<Card> hand = player.getHand(); // Assuming player has a hand of cards
+        List<Card> hand = player.getHand();
 
         System.out.println("Choose a card to play:");
         for (int i = 0; i < hand.size(); i++) {
@@ -129,7 +133,56 @@ public class GameController {
         int position = scanner.nextInt() - 1;
         scanner.nextLine(); // consume newline
 
+        if (position == unaccessibleBlock) {
+            System.out.println("Block is unaccessible. Turn skipped.");
+            return;
+        }
+
+        if (!player.canPlaceCard(cardChoice, position)) {
+            System.out.println("Cannot place card here. Turn skipped.");
+            return;
+        }
+
         player.placeCardOnDeck(chosenCard, position);
+    }
+
+    private void calculateDamage() {
+        List<Card> deck1 = player1.getDeck();
+        List<Card> deck2 = player2.getDeck();
+
+        for (int i = 0; i < DECK_SIZE; i++) {
+            Card card1 = i < deck1.size() ? deck1.get(i) : null;
+            Card card2 = i < deck2.size() ? deck2.get(i) : null;
+
+            if (card1 != null && card2 != null) {
+                if (card1.getDefenseAttack() > card2.getDefenseAttack()) {
+                    int damage = card1.getPlayerDamage() / card1.getDuration();
+                    player2.setHp(player2.getHp() - damage);
+                } else if (card2.getDefenseAttack() > card1.getDefenseAttack()) {
+                    int damage = card2.getPlayerDamage() / card2.getDuration();
+                    player1.setHp(player1.getHp() - damage);
+                }
+            } else if (card1 != null) {
+                int damage = card1.getPlayerDamage() / card1.getDuration();
+                player2.setHp(player2.getHp() - damage);
+            } else if (card2 != null) {
+                int damage = card2.getPlayerDamage() / card2.getDuration();
+                player1.setHp(player1.getHp() - damage);
+            }
+        }
+    }
+
+    private void displayWinner() {
+        System.out.println("Game Over!");
+        if (player1.getHp() <= 0 && player2.getHp() <= 0) {
+            System.out.println("It's a tie!");
+        } else if (player1.getHp() <= 0) {
+            System.out.println(player2.getUsername() + " wins!");
+        } else if (player2.getHp() <= 0) {
+            System.out.println(player1.getUsername() + " wins!");
+        } else {
+            System.out.println("No winner. Another round will be needed.");
+        }
     }
 
     private void displayPlayerStatus(Player player) {
