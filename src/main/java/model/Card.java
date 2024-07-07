@@ -1,25 +1,21 @@
 package model;
 
-import java.io.Serializable;
+public abstract class Card {
+    protected String name;
+    protected String description;
+    protected int defenseAttack;
+    protected int duration;
+    protected int playerDamage;
+    protected int maxLevel;
+    protected int upgradeCost;
 
-public class Card implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    private String name;
-    private int attack;
-    private int defense;
-    private int duration;
-    private int playerDamage;
-    private int upgradeLevel;
-    private int upgradeCost;
-
-    public Card(String name, int attack, int defense, int duration, int playerDamage, int upgradeLevel, int upgradeCost) {
+    public Card(String name, String description, int defenseAttack, int duration, int playerDamage, int maxLevel, int upgradeCost) {
         this.name = name;
-        this.attack = attack;
-        this.defense = defense;
+        this.description = description;
+        this.defenseAttack = defenseAttack;
         this.duration = duration;
         this.playerDamage = playerDamage;
-        this.upgradeLevel = upgradeLevel;
+        this.maxLevel = maxLevel;
         this.upgradeCost = upgradeCost;
     }
 
@@ -27,5 +23,29 @@ public class Card implements Serializable {
         return name;
     }
 
-    // Getters and Setters
+    public String getDescription() {
+        return description;
+    }
+
+    public int getDefenseAttack() {
+        return defenseAttack;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public int getPlayerDamage() {
+        return playerDamage;
+    }
+
+    public int getMaxLevel() {
+        return maxLevel;
+    }
+
+    public int getUpgradeCost() {
+        return upgradeCost;
+    }
+
+    public abstract void activateAbility(Player player, Player opponent);
 }
