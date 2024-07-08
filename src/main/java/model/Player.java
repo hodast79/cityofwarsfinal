@@ -1,5 +1,7 @@
 package model;
 
+import controller.GameController;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +14,6 @@ public class Player {
     private SecurityQuestion securityQuestion;
     private String securityAnswer;
     private String character;
-
     private List<Card> cardDeck;
     private int level;
     private int hp;
@@ -24,64 +25,48 @@ public class Player {
     private List<Card[]> timeline;
     private int damage;
 
+    private GameController gameController; // Reference to GameController
+
     public Player(String username, String password, String nickname, String email,
                   SecurityQuestion securityQuestion, String securityAnswer, List<Card> cardDeck,
                   int level, int hp, int xp, int coins) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
-        this.character = null; // Default to null until set by player
+        this.character = null;
+        this.email = email;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswer = securityAnswer;
+        this.cardDeck = cardDeck;
+        this.level = level;
+        this.hp = hp;
+        this.xp = xp;
+        this.coins = coins;
+        this.hand = new ArrayList<>();
         this.deck = new ArrayList<>();
-        this.email = email;
-        this.securityQuestion = securityQuestion;
-        this.securityAnswer = securityAnswer;
-        this.cardDeck = cardDeck;
-        this.level = level;
-        this.hp = hp;
-        this.xp = xp;
-        this.coins = coins;
-        this.hand = new ArrayList<>();
-    }
-
-    public Player(String username, String password, String nickname, String email,
-                  String SecurityQuestion , String securityAnswer, List<Card> cardDeck,
-                  int level, int hp, int xp, int coins) {
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.character = null; // Default to null until set by player
-        this.email = email;
-        this.securityQuestion = securityQuestion;
-        this.securityAnswer = securityAnswer;
-        this.cardDeck = cardDeck;
-        this.level = level;
-        this.hp = hp;
-        this.xp = xp;
-        this.coins = coins;
-        this.hand = new ArrayList<>();
         this.timeline = new ArrayList<>();
         this.damage = 0;
         drawInitialHand();
     }
 
-
-
-    public Player (User user){
-        this.username = user.username;
-        this.password = user.password;
-        this.nickname = user.nickname;
-        this.character = null; // Default to null until set by player
-        this.deck = new ArrayList<>();
-        this.email = user.email;
-        this.securityQuestion = user.securityQuestion;
-        this.securityAnswer = user.securityAnswer;
-        this.cardDeck = null;
+    public Player(User user) {
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.nickname = user.getNickname();
+        this.character = null;
+        this.email = user.getEmail();
+        this.securityQuestion = user.getSecurityQuestion();
+        this.securityAnswer = user.getSecurityAnswer();
+        this.cardDeck = new ArrayList<>();
         this.level = user.getLevel();
         this.hp = user.getHp();
         this.xp = user.getXp();
         this.coins = user.getCoins();
         this.hand = new ArrayList<>();
+        this.deck = new ArrayList<>();
         this.timeline = new ArrayList<>();
+        this.damage = 0;
+        drawInitialHand();
     }
 
     public List<Card> getCardDeck() {
@@ -100,18 +85,21 @@ public class Player {
         this.deck = deck;
     }
 
-    // Getters and Setters
     public String getUsername() {
         return username;
+    }
+
+    public GameController getGameController() {
+        return gameController;
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
     }
 
     public String getPassword() {
         return password;
     }
-
-//    public List<Card> getCardDeck() {
-//        return cardDeck;
-//    }
 
     public int getHp() {
         return hp;
@@ -121,8 +109,7 @@ public class Player {
         this.hp = hp;
     }
 
-    public void setFailedLoginAttempts(int i) {
-    }
+    public void setFailedLoginAttempts(int i) {}
 
     public int getFailedLoginAttempts() {
         return 0;

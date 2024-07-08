@@ -1,13 +1,13 @@
 package model;
 
 public class ChangeLocationCard extends SpecialCard {
-    public ChangeLocationCard(String name, String specialAbility, String description) {
-        super(name, specialAbility, description);
+    public ChangeLocationCard() {
+        super("ChangeLocationCard", "specialAbility", "description", "Mage");
     }
 
 
     @Override
-    public void useSpecialAbility() {
+    public void useSpecialAbility(Player currentPlayer, Player opponent) {
         // Implementation of the special ability
         System.out.println("Using green card special ability: " + getSpecialAbility());
     }

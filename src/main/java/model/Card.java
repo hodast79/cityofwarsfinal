@@ -4,6 +4,15 @@ public class Card {
     private String name;
     private int defenseAttack;
     private int duration;
+
+    public String getCharacter() {
+        return character;
+    }
+
+    public void setCharacter(String character) {
+        this.character = character;
+    }
+
     private String character;
     private int playerDamage;
 

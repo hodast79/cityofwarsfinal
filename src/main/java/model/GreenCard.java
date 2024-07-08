@@ -2,13 +2,12 @@ package model;
 
 public class GreenCard extends SpecialCard {
 
-    public GreenCard(String name, String specialAbility, String description) {
-        super(name, specialAbility, description);
+    public GreenCard() {
+        super("GreenCard", "specialAbility", "description", "Assassin");
     }
 
-
     @Override
-    public void useSpecialAbility() {
+    public void useSpecialAbility(Player currentPlayer, Player opponent) {
         // Implementation of the special ability
         System.out.println("Using green card special ability: " + getSpecialAbility());
     }

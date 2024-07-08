@@ -12,7 +12,6 @@ public class Admin  {
         this.cards = FileManager.loadCards();
         this.players = FileManager.loadPlayers();
     }
-
     // Methods to add, edit, delete cards
     public void addCard(Card card) {
         cards.add(card);

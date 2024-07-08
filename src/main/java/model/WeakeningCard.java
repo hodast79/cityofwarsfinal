@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Random;
 
 public class WeakeningCard extends SpecialCard {
-    public WeakeningCard(String name, String specialAbility, String description) {
-        super(name, specialAbility, description);
+    public WeakeningCard() {
+        super("WeakeningCard", "specialAbility", "description", "Mage");
     }
 
     @Override

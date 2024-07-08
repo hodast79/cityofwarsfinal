@@ -44,7 +44,7 @@ public class AdminController {
         boolean validCharacter = false;
 
         while(!validCharacter) {
-           validCharacter = character.equals("Warrior") || character.equals("Mage") || character.equals("Archer") || character.equals("Assassin");
+            validCharacter = character.equals("Warrior") || character.equals("Mage") || character.equals("Archer") || character.equals("Assassin");
             if (!validCharacter) {
                 System.out.println("Enter a valid card character(type):");
                 character = scanner.nextLine();
@@ -104,7 +104,7 @@ public class AdminController {
         System.out.println("Enter new card description:");
         String newDescription = scanner.nextLine();
         if (!newDescription.trim().isEmpty()) {
-        cardToEdit.setDescription(newDescription);
+            cardToEdit.setDescription(newDescription);
         }
 
         System.out.println("Current defense/attack value: " + cardToEdit.getDefenseAttack());
@@ -148,7 +148,7 @@ public class AdminController {
 
         FileManager.saveCards(cards);
         System.out.println("Card successfully edited.");
-        }
+    }
 
 
     public void deleteCard() {
@@ -173,4 +173,3 @@ public class AdminController {
 
 
 }
-

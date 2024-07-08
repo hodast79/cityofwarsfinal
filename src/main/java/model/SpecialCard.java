@@ -1,22 +1,20 @@
 package model;
 
-public abstract class SpecialCard {
-    private String name;
+public class SpecialCard extends Card {
     private String specialAbility;
-    private String description;
-
-    public SpecialCard(String name, String specialAbility, String description) {
-        this.name = name;
+    public SpecialCard(String name, int defenseAttack, String character, int duration, int playerDamage, int upgradeCost, int maxLevel, String description, String specialAbility) {
+        super(name, 0, character, duration, 0, upgradeCost, maxLevel, description);
         this.specialAbility = specialAbility;
-        this.description = description;
     }
 
-    public String getName() {
-        return name;
+    public SpecialCard(String name, String character, int defenseAttack, int duration, int playerDamage, String specialAbility) {
+        super(name, character, 0, duration, 0);
+        this.specialAbility = specialAbility;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public SpecialCard(String name, String specialAbility, String description, String character) {
+        super(name, character, 0, 1, 0);
+        this.specialAbility = specialAbility;
     }
 
     public String getSpecialAbility() {
@@ -27,14 +25,13 @@ public abstract class SpecialCard {
         this.specialAbility = specialAbility;
     }
 
-    public String getDescription() {
-        return description;
+    @Override
+    public void displayInfo() {
+        super.displayInfo();
+        System.out.println("Special Ability: " + specialAbility);
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void useSpecialAbility(Player currentPlayer, Player opponent) {
+        // Implement the special ability logic in subclasses
     }
-
-
-    public abstract void useSpecialAbility(Player currentPlayer, Player opponent);
 }

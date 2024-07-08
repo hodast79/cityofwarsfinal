@@ -277,4 +277,15 @@ public class GameController {
             System.out.println((i + 1) + ". " + card.getName() + " (defenceAttack" + card.getDefenseAttack()+ ")");
         }
     }
+
+
+    public int getUnaccessibleBlock() {
+        return unaccessibleBlock;
+    }
+
+    public void setUnaccessibleBlock(int unaccessibleBlock) {
+        this.unaccessibleBlock = unaccessibleBlock;
+    }
+
+
 }
